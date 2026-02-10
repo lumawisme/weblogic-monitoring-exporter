@@ -5,6 +5,12 @@ WebLogic Server (WLS) instances, which it obtains by using the
 [WLS RESTful Management API](https://docs.oracle.com/middleware/12213/wls/WLRUR/overview.htm#WLRUR111), available in version 12.2.1 or later.
 Metrics are selected using a [YAML configuration file](#Configuration).
 
+{{% notice note %}}
+`WLS RESTful Management API` must be enabled in the WebLogic Server configuration for WebLogic Monitoring Exporter to function properly
+, default is enabled unless it is disabled deliberately.
+{{% /notice %}}
+
+
 The exporter is available in two forms:
  - A [web application](#web-application) that you deploy to the server from which metrics are to be extracted.
  You may include a configuration file directly in the WAR file, and you may temporarily modify the configuration in a
@@ -16,6 +22,7 @@ The exporter is available in two forms:
  - A [separate process](#sidecar) that is run alongside a server instance. You supply the configuration to such a
 process with a PUT command, as described below. [WebLogic Server Kubernetes Operator](https://github.com/oracle/weblogic-kubernetes-operator/) versions 3.2 and later have special support for the exporter in this form.
 For more information, see [Use the Monitoring Exporter with WebLogic Kubernetes Operator](#use-the-monitoring-exporter-with-weblogic-kubernetes-operator).
+
 
 ## Configuration
 Here is an example `yaml` file configuration:
@@ -177,10 +184,12 @@ One way to use the exporter is by creating a WAR file with a default configurati
 
 #### Setting the configuration
 
-The web application has a main landing page, which displays the current [configuration](#configuration) and allows
+Once the WAR file is deployed, the web application has a main landing page `/wls-exporter`, which displays the current [configuration](#configuration) and allows
 you to change it, either by uploading a replacement or an addition to the queries specified with the current one.
-Metrics will then be available from `<application-root>/metrics`.
+Metrics will then be available from `wls-exporter/metrics`.  You will be prompted for the administrator credentials.
 
+You can also use `curl -i -u <administrator credential uid:pwd> -L -F "effect=<replace|append>" -F "configuration=@config.yaml" http(s)://adminserver-host:port/wls-exporter/configure`
+to change the configuration.
 
 ## Download the release
 
@@ -250,6 +259,12 @@ curl -X PUT -i -u myname:mypassword \
 
 Replace `myname` and `mypassword` with the credentials expected by WebLogic Server for its REST API,
 and `<path to yaml>` with the relative path to the configuration to use.
+
+You can retrieve the current configuration by
+
+```
+curl -v  http://localhost:8080
+```
 
 ## Access the metrics
 

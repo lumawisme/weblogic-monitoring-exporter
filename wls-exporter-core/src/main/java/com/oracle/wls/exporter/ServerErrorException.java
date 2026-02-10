@@ -11,6 +11,7 @@ import java.util.Optional;
 public class ServerErrorException extends WebClientException {
 
   final int status;
+  String requestURL;
 
   public ServerErrorException(int status) {
     this.status = status;
@@ -21,6 +22,12 @@ public class ServerErrorException extends WebClientException {
     this.status = status;
   }
 
+  public ServerErrorException(int status, String requestURL, String message) {
+    super(message);
+    this.status = status;
+    this.requestURL = requestURL;
+  }
+
   public int getStatus() {
     return status;
   }
@@ -28,6 +35,10 @@ public class ServerErrorException extends WebClientException {
   @Override
   public String getMessage() {
     StringBuilder sb = new StringBuilder("Received status ").append(status);
+    if (requestURL != null) {
+      sb.append(" for request URL: ").append(requestURL)
+              .append(". Make sure the request URL is valid and enabled.  ");
+    }
     Optional.ofNullable(super.getMessage()).ifPresent(m -> sb.append(" - ").append(m));
     return sb.toString();
   }

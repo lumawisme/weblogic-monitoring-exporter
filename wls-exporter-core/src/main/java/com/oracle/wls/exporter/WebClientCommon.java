@@ -241,7 +241,7 @@ public abstract class WebClientCommon implements WebClient {
 
         private ServerErrorException createServerErrorException() {
             try {
-                return new ServerErrorException(response.getResponseCode(), asString(response.getContents()));
+                return new ServerErrorException(response.getResponseCode(), url, asString(response.getContents()));
             } catch (IOException e) {
                 return new ServerErrorException(response.getResponseCode());
             }
