@@ -49,7 +49,7 @@ USER oracle
 
 COPY wls-exporter-sidecar/target/wls-exporter-sidecar.jar /app/wls-exporter-sidecar.jar
 COPY wls-exporter-sidecar/target/libs /app/libs
-
-ENTRYPOINT ["/jre/bin/java", "-jar", "/app/wls-exporter-sidecar.jar"]
+COPY --chown=oracle:root wls-exporter-sidecar/start_exporter.sh .
+ENTRYPOINT ["sh", "start_exporter.sh"]
 
 EXPOSE 8080
